@@ -1,60 +1,59 @@
-<h1>Railsチュートリアルにおける、仮想環境（Vagrant)を使った環境構築まとめ</h1>
+### Railsチュートリアルの、Macの場合の仮想環境（Vagrant）を使った環境構築、の自分用補足メモ（2020年４月）
 
-1.2.1 開発環境　から　仮想環境 (Vagrant) を使った環境構築
-https://github.com/yasslab/railstutorial.jp_starter_kit
-に飛んだ。
+#### まず、Railsチュートリアル[1.2.1 開発環境](https://railstutorial.jp/chapters/beginning?version=5.1#sec-development_environment)から[YassLab Inc.](https://github.com/yasslab)の[仮想環境 (Vagrant) を使った環境構築](https://github.com/yasslab/railstutorial.jp_starter_kit)に飛んだ。
 
-本ツールを使った環境構築の手順　ということで、
-<ol>
-  <li>まずは下記リンクからスターターキットをダウンロードし、Zip ファイルを展開
-  https://github.com/yasslab/railstutorial.jp_starter_kit/archive/master.zip</li>
-  <li>VirtualBoxをインストールする</li>
-  <li>Vagrantをインストールする</li>
-  <li>Vagrantfile があるディレクトリに移動して、vagrant upを実行する</li>
-  <li>vagrant ssh でゲストOSにログインする</li>
-  <li><code>ruby --version</code> や <code>rails --version</code> でちゃんと動くか確かめる<br>
-  ruby 2.6.2p47 (2019-03-13 revision 67232) [x86_64-linux]<br>
+1. [本ツールを使った環境構築の手順](https://github.com/yasslab/railstutorial.jp_starter_kit#本ツールを使った環境構築の手順)から[スターターキット](https://github.com/yasslab/railstutorial.jp_starter_kit/archive/master.zip)をダウンロードし、Zip ファイルを展開
+2. VirtualBoxをインストールする
+3. Vagrantをインストールする
+4. Vagrantfile があるディレクトリに移動して、`vagrant up`を実行する
+5. `vagrant ssh`でゲストOSにログインする
+6. `ruby --version`や`rails --version`でちゃんと動くか確かめる
+```
+  ruby 2.6.2p47 (2019-03-13 revision 67232) [x86_64-linux]
   Rails 5.1.7
-  </li>
-  <li>動作確認<br>
-    <code>[vagrant@localhost ~]$ git clone https://github.com/yasslab/sample_apps.git</code><br>
-    <code>[vagrant@localhost ~]$ cd sample_apps/5_1_2/ch14</code><br>
-    <code>[vagrant@localhost ch14]$ bundle install</code><br>
-  </li>
-  <li>第１エラー発生　→　postgresqlが必要<br>
-    <span style="color: red; ">
-      An error occurred while installing pg (0.18.4), and Bundler cannot continue.<br>
-      Make sure that `gem install pg -v '0.18.4' --source 'https://rubygems.org/'` succeeds before    bundling.<br>
-    </span>
-  【解決法】<br>
-    <code>[vagrant@localhost ch14]$ cd</code><br>
-    <code>[vagrant@localhost ~]$ sudo su</code><br>
-    <code>[root@localhost vagrant]# yum install postgresql-devel</code><br>
-    <code>[root@localhost ~]# exit</code><br>
-  【参考サイト】`gem install pg` が失敗するときの対処法https://qiita.com/tdrk/items/812e7ea763080e147757
-  </li>
-  <li>動作確認続き<br>
-    <code>[vagrant@localhost ~]$ cd sample_apps/5_1_2/ch14</code><br>
-    <code>[vagrant@localhost ch14]$ bundle install</code><br>
-    <code>[vagrant@localhost ch14]$ rails db:migrate</code><br>
-    <code>[vagrant@localhost ch14]$ rails test</code><br>
-    <code>[vagrant@localhost ch14]$ rails server</code><br>
-  </li>
-</ol>
+```
+7. 動作確認
+```
+[vagrant@localhost ~]$ git clone https://github.com/yasslab/sample_apps.git
+[vagrant@localhost ~]$ cd sample_apps/5_1_2/ch14
+[vagrant@localhost ch14]$ bundle install
+```
 
-次に、Railsのバージョンを5.1.7から5.1.6にダウングレードした。
-<ol>
-  <li>
-    <code>[vagrant@localhost ch14]$ cd</code><br>
-    <code>[vagrant@localhost ~]$ rails --version</code><br>
-    <code>[vagrant@localhost ~]$ gem uninstall rails</code><br>
-    <code>[vagrant@localhost ~]$ gem uninstall railties</code><br>
-    <code>[vagrant@localhost ~]$ gem install rails -v 5.1.6</code><br>
-    <code>[vagrant@localhost ~]$ rails -v</code><br>
-    【参考サイト】How to downgrade my rails version?
-    https://stackoverflow.com/questions/28082120/how-to-downgrade-my-rails-version
-  </li>
-</ol>
+#### ここで１個目のエラーが発生
+```
+An error occurred while installing pg (0.18.4), and Bundler cannot continue.
+Make sure that `gem install pg -v '0.18.4' --source 'https://rubygems.org/'` succeeds before bundling.
+```
+→　postgresqlのインストールが必要<br>
+【解決法】
+【参考サイト】[Qiita: @tdrk `gem install pg` が失敗するときの対処法](https://qiita.com/tdrk/items/812e7ea763080e147757)
+```
+[vagrant@localhost ch14]$ cd
+[vagrant@localhost ~]$ sudo su
+[root@localhost vagrant]# yum install postgresql-devel
+[root@localhost ~]# exit
+```
+
+7.動作確認続き
+```
+[vagrant@localhost ~]$ cd sample_apps/5_1_2/ch14
+[vagrant@localhost ch14]$ bundle install
+[vagrant@localhost ch14]$ rails db:migrate
+[vagrant@localhost ch14]$ rails test
+[vagrant@localhost ch14]$ rails server
+```
+
+#### 次に、Railsのバージョンを5.1.7から5.1.6にダウングレードした。
+
+【参考サイト】[StackOverflow: How to downgrade my rails version?](https://stackoverflow.com/questions/28082120/how-to-downgrade-my-rails-version)
+```
+[vagrant@localhost ch14]$ cd
+[vagrant@localhost ~]$ rails --version
+[vagrant@localhost ~]$ gem uninstall rails
+[vagrant@localhost ~]$ gem uninstall railties
+[vagrant@localhost ~]$ gem install rails -v 5.1.6
+[vagrant@localhost ~]$ rails -v
+```
 
 次に、GitHubのアカウント作成後、非公開型レポジトリhello_appを作成し、そこにプッシュを試みた。
 <ol>
