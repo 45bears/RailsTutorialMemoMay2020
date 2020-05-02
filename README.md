@@ -1,0 +1,1 @@
+# RailsTutorialMemoMay2020
