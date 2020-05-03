@@ -23,8 +23,7 @@ An error occurred while installing pg (0.18.4), and Bundler cannot continue.
 Make sure that `gem install pg -v '0.18.4' --source 'https://rubygems.org/'` succeeds before bundling.
 ```
 → postgresqlのインストールが必要<br>
-【解決法】
-【参考サイト】[Qiita: `gem install pg` が失敗するときの対処法 @tdrk](https://qiita.com/tdrk/items/812e7ea763080e147757)
+【解決法参考サイト】[Qiita: `gem install pg` が失敗するときの対処法 @tdrk](https://qiita.com/tdrk/items/812e7ea763080e147757)
 ```
 [vagrant@localhost ch14]$ cd
 [vagrant@localhost ~]$ sudo su
@@ -41,7 +40,7 @@ Make sure that `gem install pg -v '0.18.4' --source 'https://rubygems.org/'` suc
 ```
 
 #### 次に、Railsのバージョンを5.1.7から5.1.6にダウングレードした。
-【参考サイト】[StackOverflow: How to downgrade my rails version?](https://stackoverflow.com/questions/28082120/how-to-downgrade-my-rails-version)
+【解決法参考サイト】[StackOverflow: How to downgrade my rails version?](https://stackoverflow.com/questions/28082120/how-to-downgrade-my-rails-version)
 ```
 [vagrant@localhost ch14]$ cd
 [vagrant@localhost ~]$ rails --version
@@ -61,16 +60,13 @@ Make sure that `gem install pg -v '0.18.4' --source 'https://rubygems.org/'` suc
 
 #### ここで、２個目のエラーが発生
 ```
-**Permission denied (publickey).**
+Permission denied (publickey).
 fatal: The remote end hung up unexpectedly.
 ```
 → GitHubで、公開鍵の設定が必要<br>
-【解決法】【参考サイト】[Qiita: GitHubでssh接続する手順〜公開鍵・秘密鍵の生成から〜 @shizuma](https://qiita.com/shizuma/items/2b2f873a0034839e47ce)
-```
-[vagrant@localhost hello_app]$ cd
-```
+【解決法参考サイト】[Qiita: GitHubでssh接続する手順〜公開鍵・秘密鍵の生成から〜 @shizuma](https://qiita.com/shizuma/items/2b2f873a0034839e47ce)
 
-#### 次に、Railsチュートリアル[1.5 デプロイする](https://railstutorial.jp/chapters/beginning?version=5.1#sec-deploying)に進み、Herokuのバージョンを確認した。
+#### GitHub内で公開鍵の設定を行った後、Railsチュートリアル[1.5 デプロイする](https://railstutorial.jp/chapters/beginning?version=5.1#sec-deploying)に進み、Herokuのバージョンを確認した。
 ```
 [vagrant@localhost hello_app]$ heroku --version
 ```
@@ -93,7 +89,7 @@ SyntaxError: Use of const in strict mode.
     at Module.load (module.js:356:32)
 ```
 → Node.jsのバージョンアップが必要<br>
-【参考サイト】[DEV Community: How to Upgrade and update Nodejs via NPM Centos 6 by TeddyZugana](https://dev.to/kevinmel2000/how-to-upgrade-and-update-nodejs-via-npm-centos-6-3omm)
+【解決法参考サイト】[DEV Community: How to Upgrade and update Nodejs via NPM Centos 6 by TeddyZugana](https://dev.to/kevinmel2000/how-to-upgrade-and-update-nodejs-via-npm-centos-6-3omm)
 ```
 [vagrant@localhost hello_app]$ cd
 [vagrant@localhost ~]$ sudo su
@@ -104,6 +100,7 @@ SyntaxError: Use of const in strict mode.
 [root@localhost vagrant]# sudo npm cache clean -f
 [root@localhost vagrant]# sudo npm install -g n
 ```
+
 #### ここで、さらに４個目のエラーが発生
 ```
 npm http GET https://registry.npmjs.org/n
@@ -135,8 +132,8 @@ npm ERR! Additional logging details can be found in:
 npm ERR!     /home/vagrant/environment/hello_app/npm-debug.log
 npm ERR! not ok code 0
 ```
-→ https のレジストリに対するSSL鍵のバリデーション機能を外す必要<br>
-【解決法】【参考サイト】[@YuG1224 BLOG: npm install で SSL Error になった時の対処法。](https://blog.yug1224.com/archives/563d9b67bf652a600632d01e/)
+→ https のレジストリに対するSSL鍵のバリデーション機能の無効化が必要<br>
+【解決法参考サイト】[@YuG1224 BLOG: npm install で SSL Error になった時の対処法。](https://blog.yug1224.com/archives/563d9b67bf652a600632d01e/)
 ```
 [root@localhost vagrant]# npm config set strict-ssl false
 [root@localhost vagrant]# npm install -g n
@@ -148,6 +145,7 @@ npm ERR! not ok code 0
 [root@localhost vagrant]# sudo ln -sf /usr/local/n/versions/node/11.8.0/bin/node /usr/bin/node
 [root@localhost vagrant]# node -v
 ```
+
 #### ここで、さらに５個目のエラーが発生
 ```
 bash: /usr/bin/node: そのようなファイルやディレクトリはありません
@@ -158,6 +156,7 @@ bash: /usr/bin/node: そのようなファイルやディレクトリはあり�
 [root@localhost vagrant]# sudo ln -sf /usr/local/n/versions/node/12.16.3/bin/node /usr/bin/node
 [root@localhost vagrant]# node -v
 ```
+
 #### ここで、６個目のエラーが発生
 ```
 node: /usr/lib64/libstdc++.so.6: version `GLIBCXX_3.4.14' not found (required by node)
@@ -168,6 +167,90 @@ node: /lib64/libc.so.6: version `GLIBC_2.16' not found (required by node)
 node: /lib64/libc.so.6: version `GLIBC_2.17' not found (required by node)
 node: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by node)
 ```
+→ CentOS6で用意されている「gcc」はバージョンが古いため、「gcc」のソースからのビルド、新しいバージョンへの更新、ライブラリの用意が必要<br>
+【解決法参考サイト】[Minecraft.server-memo.net: gccの更新](https://minecraft.server-memo.net/mc-javaedition-install/#gcc)
+```
+[root@localhost vagrant]# yum install gcc
+[root@localhost vagrant]# yum install gcc-c++
+[root@localhost vagrant]# curl -LO http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-9.3.0/gcc-9.3.0.tar.gz
+[root@localhost vagrant]# curl -LO http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-9.3.0/sha512.sum
+[root@localhost vagrant]# sha512sum --check sha512.sum
+[root@localhost vagrant]# tar xzfv gcc-9.3.0.tar.gz -C /usr/local/src
+[root@localhost vagrant]# cd /usr/local/src/gcc-9.3.0/
+[root@localhost gcc-9.3.0]# ./contrib/download_prerequisites
+[root@localhost gcc-9.3.0]# mkdir build
+[root@localhost gcc-9.3.0]# cd build
+[root@localhost build]# ../configure --enable-languages=c,c++ --prefix=/usr/local --disable-bootstrap --disable-multilib
+[root@localhost build]# make
+[root@localhost build]# make　install
+[root@localhost build]# gcc --version
+[root@localhost build]# cat /etc/ld.so.conf
+[root@localhost build]# cd /etc/ld.so.conf.d
+[root@localhost ld.so.conf.d]# vi usr_local_lib64.conf
+[root@localhost ld.so.conf.d]# ldconfig
+```
 
+#### ここで、７個目のエラーが発生
+```
+ldconfig: /usr/local/lib64/libstdc++.so.6.0.28-gdb.py はELFファイルではありません - 間違ったmagicバイトをファイルの先頭に持っています.
+```
+→ 【解決法参考サイト】に記載のとおり、
+> 該当ファイルの名前を変更して対応します。
+```
+[root@localhost ld.so.conf.d]# mv /usr/local/lib64/libstdc++.so.6.0.25-gdb.py  /usr/local/lib64/back_libstdc++.so.6.0.25-gdb.py
+```
 
+#### ここで、８個目のエラーが発生
+```
+mv: cannot stat `/usr/local/lib64/libstdc++.so.6.0.25-gdb.py': そのようなファイルやディレクトリはありません
+```
+→ ７個目のエラーの時のファイル名（so.6.0.28）と８個目のエラーのファイル名の一致が必要
+```
+[root@localhost ld.so.conf.d]# mv /usr/local/lib64/libstdc++.so.6.0.28-gdb.py  /usr/local/lib64/back_libstdc++.so.6.0.28-gdb.py
+[root@localhost ld.so.conf.d]# ldconfig
+```
 
+#### 改めて、Herokuのバージョンを確認
+```
+[root@localhost ld.so.conf.d]# heroku --version
+```
+
+#### 少しエラーが減った。
+```
+node: /lib64/libc.so.6: version `GLIBC_2.16' not found (required by node)
+node: /lib64/libc.so.6: version `GLIBC_2.17' not found (required by node)
+node: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by node)
+```
+→ glibcのアップデートが必要
+【解決法参考サイト】<br>
+[teratail: nodeが古いバージョンになってしまいアップデートが効かない by yosuke_narumi](https://teratail.com/questions/231008)<br>
+[GitHubGist: update glibc to 2.17 for CentOS 6 by harv/glibc-2.17_centos6.sh](https://gist.github.com/harv/f86690fcad94f655906ee9e37c85b174#file-glibc-2-17_centos6-sh)
+```
+[vagrant@localhost ~]wget http://copr-be.cloud.fedoraproject.org/results/mosquito/myrepo-el6/epel-6-x86_64/glibc-2.17-55.fc20/glibc-2.17-55.el6.x86_64.rpm
+[vagrant@localhost ~]wget http://copr-be.cloud.fedoraproject.org/results/mosquito/myrepo-el6/epel-6-x86_64/glibc-2.17-55.fc20/glibc-common-2.17-55.el6.x86_64.rpm
+[vagrant@localhost ~]wget http://copr-be.cloud.fedoraproject.org/results/mosquito/myrepo-el6/epel-6-x86_64/glibc-2.17-[vagrant@localhost ~]55.fc20/glibc-devel-2.17-55.el6.x86_64.rpm
+[vagrant@localhost ~]wget http://copr-be.cloud.fedoraproject.org/results/mosquito/myrepo-el6/epel-6-x86_64/glibc-2.17-55.fc20/glibc-headers-2.17-55.el6.x86_64.rpm
+[vagrant@localhost ~]$ sudo rpm -Uvh glibc-2.17-55.el6.x86_64.rpm glibc-common-2.17-55.el6.x86_64.rpm glibc-devel-2.17-55.el6.x86_64.rpm glibc-headers-2.17-55.el6.x86_64.rpm
+```
+
+#### ここで、最後のエラーが発生
+```
+警告: glibc-2.17-55.el6.x86_64.rpm: ヘッダ V3 RSA/SHA1 Signature, key ID 73ec361c: NOKEY
+エラー: 依存性の欠如:
+	glibc-common = 2.12-1.212.el6_10.3 は (インストール済み)glibc-2.12-1.212.el6_10.3.i686 に必要とされています
+	glibc-headers = 2.12-1.212.el6_10.3 は (インストール済み)glibc-devel-2.12-1.212.el6_10.3.i686 に必要とされています
+```
+→ 【解決法参考サイト】に記載のとおり、
+> 最後のパラメータに「--force --nodeps」を追加してみてください。
+```
+[vagrant@localhost ~]$ sudo rpm -Uvh glibc-2.17-55.el6.x86_64.rpm glibc-common-2.17-55.el6.x86_64.rpm glibc-devel-2.17-55.el6.x86_64.rpm glibc-headers-2.17-55.el6.x86_64.rpm  --force --nodeps
+```
+
+#### 改めて、Herokuのバージョンを確認
+```
+[vagrant@localhost ~]$ heroku --version
+```
+```
+heroku/7.39.6 linux-x64 node-v12.16.3
+```
+さぁ、準備が整いました。出発進行！
