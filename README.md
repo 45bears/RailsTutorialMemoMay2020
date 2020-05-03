@@ -1,23 +1,66 @@
-### Railsチュートリアルの、Macの場合の仮想環境（Vagrant）及びGitHubを使った環境構築、の自分用補足メモ（2020年４月）
+### Railsチュートリアルの、Macの場合の仮想環境（Vagrant）及びGitHubを使った環境構築、の自分用補足メモ（2020年５月）
 
-#### まず、Railsチュートリアル[1.2.1 開発環境](https://railstutorial.jp/chapters/beginning?version=5.1#sec-development_environment)から[YassLab Inc.](https://github.com/yasslab)の[仮想環境 (Vagrant) を使った環境構築](https://github.com/yasslab/railstutorial.jp_starter_kit)に飛んだ。
+#### 前提: ドットインストールの次のレッスンの受講
+* [ローカル開発環境の構築 [macOS編]](https://dotinstall.com/lessons/basic_localdev_mac_v2)
+
+* [【旧版】ローカル開発環境の構築 » #10 PostgreSQLを導入してみよう](https://dotinstall.com/lessons/basic_local_development_v2/24813)
+```
+[vagrant@localhost ~]$ sudo yum install https://download.postgresql.org/pub/repos/yum/reporpms/EL-6-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+[vagrant@localhost ~]$ sudo yum install postgresql12
+[vagrant@localhost ~]$ sudo yum install postgresql12-server
+[vagrant@localhost ~]$ sudo service postgresql-12 initdb
+[vagrant@localhost ~]$ sudo chkconfig postgresql-12 on
+[vagrant@localhost ~]$ sudo service postgresql-12 start
+[vagrant@localhost ~]$ psql --version
+```
+* [Ruby on Rails 5入門 » #01 Ruby on Railsを使ってみよう](https://dotinstall.com/lessons/basic_rails_v3/41801)
+```
+[vagrant@localhost ~]$ cd ~/.rbenv
+[vagrant@localhost .rbenv]$ git pull origin master
+[vagrant@localhost .rbenv]$ cd ~/.rbenv/plugins/ruby-build 
+[vagrant@localhost ruby-build]$ git pull origin master
+[vagrant@localhost ruby-build]$ rbenv install 2.6.5
+[vagrant@localhost ruby-build]$ rbenv global 2.6.5
+[vagrant@localhost ruby-build]$ rbenv rehash
+[vagrant@localhost ruby-build]$ ruby -v
+[vagrant@localhost ruby-build]$ gem install rails -v 5.1.3 --no-document
+[vagrant@localhost ruby-build]$ rails --version
+```
+* [Heroku入門 » #04 Heroku Toolbeltをインストールしよう](https://dotinstall.com/lessons/basic_heroku/28804)
+```
+[vagrant@localhost ruby-build]$ wget https://cli-assets.heroku.com/branches/stable/heroku-linux-amd64.tar.gz -O heroku.tar.gz
+[vagrant@localhost ruby-build]$ mkdir -p /usr/local/lib
+[vagrant@localhost ruby-build]$ sudo tar -xvzf heroku.tar.gz -C /usr/local/lib
+[vagrant@localhost ruby-build]$ sudo curl https://cli-assets.heroku.com/install.sh | sh
+```
+
+#### 最初のエラーが発生
+```
+This script requires superuser access.
+You will be prompted for your password by sudo.
+Your path is missing /usr/local/bin, you need to add this to use this installer.
+```
+→ ルートユーザー権限とパス設定が必要<br>
+【解決法参考サイト】[Qiita: Vagrant環境でHeroku CLIがインストールできない @karley](https://qiita.com/karlley/items/c423d02eee2292dab1f9)
+```
+[vagrant@localhost ruby-build]$ sudo su
+[root@localhost ruby-build]# export PATH=/usr/local/bin:$PATH
+[root@localhost ruby-build]# curl https://cli-assets.heroku.com/install.sh | sh
+```
+たくさんエラー文が出るが後ほど解決するので、とりあえずルートユーザーから外れる。
+```
+[root@localhost ruby-build]# exit
+```
+
+#### 次に、Railsチュートリアル[1.2.1 開発環境](https://railstutorial.jp/chapters/beginning?version=5.1#sec-development_environment)から[YassLab Inc.](https://github.com/yasslab)の[仮想環境 (Vagrant) を使った環境構築](https://github.com/yasslab/railstutorial.jp_starter_kit)に飛んだ。
 1. [本ツールを使った環境構築の手順](https://github.com/yasslab/railstutorial.jp_starter_kit#本ツールを使った環境構築の手順)から[スターターキット](https://github.com/yasslab/railstutorial.jp_starter_kit/archive/master.zip)をダウンロードし、Zip ファイルを展開
-2. VirtualBoxをインストールする
-3. Vagrantをインストールする
-4. Vagrantfile があるディレクトリに移動して、`vagrant up`を実行する
-5. `vagrant ssh`でゲストOSにログインする
-6. `ruby --version`や`rails --version`でちゃんと動くか確かめる
+2. 動作確認
 ```
-  ruby 2.6.2p47 (2019-03-13 revision 67232) [x86_64-linux]
-  Rails 5.1.7
-```
-7. 動作確認
-```
-[vagrant@localhost ~]$ git clone https://github.com/yasslab/sample_apps.git
-[vagrant@localhost ~]$ cd sample_apps/5_1_2/ch14
+[vagrant@localhost ruby-build]$ git clone https://github.com/yasslab/sample_apps.git
+[vagrant@localhost ruby-build]$ cd sample_apps/5_1_2/ch14
 [vagrant@localhost ch14]$ bundle install
 ```
-#### ここで、１個目のエラーが発生
+#### ここで、２個目のエラーが発生
 ```
 An error occurred while installing pg (0.18.4), and Bundler cannot continue.
 Make sure that `gem install pg -v '0.18.4' --source 'https://rubygems.org/'` succeeds before bundling.
@@ -25,29 +68,24 @@ Make sure that `gem install pg -v '0.18.4' --source 'https://rubygems.org/'` suc
 → postgresqlのインストールが必要<br>
 【解決法参考サイト】[Qiita: `gem install pg` が失敗するときの対処法 @tdrk](https://qiita.com/tdrk/items/812e7ea763080e147757)
 ```
-[vagrant@localhost ch14]$ cd
-[vagrant@localhost ~]$ sudo su
-[root@localhost vagrant]# yum install postgresql-devel
-[root@localhost ~]# exit
+[vagrant@localhost ch14]$ sudo su yum install postgresql-devel
+[vagrant@localhost ch14]$ bundle install
 ```
 7. 動作確認続き
 ```
-[vagrant@localhost ~]$ cd sample_apps/5_1_2/ch14
-[vagrant@localhost ch14]$ bundle install
 [vagrant@localhost ch14]$ rails db:migrate
 [vagrant@localhost ch14]$ rails test
 [vagrant@localhost ch14]$ rails server
 ```
 
-#### 次に、Railsのバージョンを5.1.7から5.1.6にダウングレードした。
-【解決法参考サイト】[StackOverflow: How to downgrade my rails version?](https://stackoverflow.com/questions/28082120/how-to-downgrade-my-rails-version)
+#### 次に、Railsのバージョンを5.1.3から5.1.6にアップグレード
 ```
-[vagrant@localhost ch14]$ cd
-[vagrant@localhost ~]$ rails --version
-[vagrant@localhost ~]$ gem uninstall rails
-[vagrant@localhost ~]$ gem uninstall railties
-[vagrant@localhost ~]$ gem install rails -v 5.1.6
-[vagrant@localhost ~]$ rails -v
+[vagrant@localhost ch14]$ rails -v
+[vagrant@localhost ch14]$ gem uninstall rails
+[vagrant@localhost ch14]$ gem uninstall railties
+[vagrant@localhost ch14]$ gem install rails -v 5.1.6 --no-document
+[vagrant@localhost ch14]$ bundle install
+[vagrant@localhost ch14]$ rails -v
 ```
 
 #### 次に、Railsチュートリアル[1.3 最初のアプリケーション](https://railstutorial.jp/chapters/beginning?version=5.1#sec-the_hello_application)に進んだ。
@@ -58,7 +96,7 @@ Make sure that `gem install pg -v '0.18.4' --source 'https://rubygems.org/'` suc
 [vagrant@localhost hello_app]$ git push -u origin --all
 ```
 
-#### ここで、２個目のエラーが発生
+#### ここで、３個目のエラーが発生
 ```
 Permission denied (publickey).
 fatal: The remote end hung up unexpectedly.
@@ -66,12 +104,23 @@ fatal: The remote end hung up unexpectedly.
 → GitHubで、公開鍵の設定が必要<br>
 【解決法参考サイト】[Qiita: GitHubでssh接続する手順〜公開鍵・秘密鍵の生成から〜 @shizuma](https://qiita.com/shizuma/items/2b2f873a0034839e47ce)
 
-#### GitHub内で公開鍵の設定を行った後、Railsチュートリアル[1.5 デプロイする](https://railstutorial.jp/chapters/beginning?version=5.1#sec-deploying)に進み、Herokuのバージョンを確認した。
+```
+[vagrant@localhost hello_app]$ cd ~/.ssh
+[vagrant@localhost .ssh]$ ssh-keygen -t rsa
+```
+
+#### GitHub内で公開鍵の設定を行った後、リポジトリ追加とリポジトリへのプッシュ
+```
+[vagrant@localhost .ssh]$ cd ~/environment/hello_app
+[vagrant@localhost hello_app]$ git push -u origin --all
+```
+
+#### Railsチュートリアル[1.5 デプロイする](https://railstutorial.jp/chapters/beginning?version=5.1#sec-deploying)に進み、Herokuのバージョンを確認した。
 ```
 [vagrant@localhost hello_app]$ heroku --version
 ```
 
-#### ここで、３個目のエラーが発生
+#### ここで、４個目のエラーが発生
 ```
 /usr/local/lib/heroku/node_modules/@oclif/command/lib/index.js:3
 const path = require("path");
@@ -91,17 +140,15 @@ SyntaxError: Use of const in strict mode.
 → Node.jsのバージョンアップが必要<br>
 【解決法参考サイト】[DEV Community: How to Upgrade and update Nodejs via NPM Centos 6 by TeddyZugana](https://dev.to/kevinmel2000/how-to-upgrade-and-update-nodejs-via-npm-centos-6-3omm)
 ```
-[vagrant@localhost hello_app]$ cd
-[vagrant@localhost ~]$ sudo su
-[root@localhost vagrant]# yum install gcc gcc-c++ make
-[root@localhost vagrant]# yum install epel-release
-[root@localhost vagrant]# yum install nodejs
-[root@localhost vagrant]# strings /usr/lib64/libstdc++.so.6 | grep GLIBC
-[root@localhost vagrant]# sudo npm cache clean -f
-[root@localhost vagrant]# sudo npm install -g n
+[vagrant@localhost hello_app]$ sudo yum install gcc gcc-c++ make
+[vagrant@localhost hello_app]$ sudo yum install epel-release
+[vagrant@localhost hello_app]$ sudo yum install nodejs
+[vagrant@localhost hello_app]$ strings /usr/lib64/libstdc++.so.6 | grep GLIBC
+[vagrant@localhost hello_app]$ npm cache clean -f
+[vagrant@localhost hello_app]$ npm install -g n
 ```
 
-#### ここで、さらに４個目のエラーが発生
+#### ここで、さらに５個目のエラーが発生
 ```
 npm http GET https://registry.npmjs.org/n
 npm http GET https://registry.npmjs.org/n
@@ -135,26 +182,18 @@ npm ERR! not ok code 0
 → https のレジストリに対するSSL鍵のバリデーション機能の無効化が必要<br>
 【解決法参考サイト】[@YuG1224 BLOG: npm install で SSL Error になった時の対処法。](https://blog.yug1224.com/archives/563d9b67bf652a600632d01e/)
 ```
-[root@localhost vagrant]# npm config set strict-ssl false
-[root@localhost vagrant]# npm install -g n
-[root@localhost vagrant]# npm config set strict-ssl true
+[vagrant@localhost hello_app]$ sudo npm config set strict-ssl false
+[vagrant@localhost hello_app]$ sudo npm install -g n
+[vagrant@localhost hello_app]$ sudo npm config set strict-ssl true
 ```
 もう一度、気を取り直して、Node.jsのバージョンアップを継続。
 ```
-[root@localhost vagrant]# sudo n stable
-[root@localhost vagrant]# sudo ln -sf /usr/local/n/versions/node/11.8.0/bin/node /usr/bin/node
-[root@localhost vagrant]# node -v
+[vagrant@localhost hello_app]$ sudo n stable
 ```
-
-#### ここで、さらに５個目のエラーが発生
+次のコードのフォルダ名は、`[vagrant@localhost hello_app]$ sudo n stable`で`mkdir`されたフォルダ名に合わせる。
 ```
-bash: /usr/bin/node: そのようなファイルやディレクトリはありません
-```
-→ `[root@localhost vagrant]# sudo n stable`で`mkdir`されたフォルダ名と
-`[root@localhost vagrant]# sudo ln -sf /usr/local/n/versions/node/11.8.0/bin/node /usr/bin/node`のフォルダ名の一致が必要
-```
-[root@localhost vagrant]# sudo ln -sf /usr/local/n/versions/node/12.16.3/bin/node /usr/bin/node
-[root@localhost vagrant]# node -v
+[vagrant@localhost hello_app]$ sudo ln -sf /usr/local/n/versions/node/12.16.3/bin/node /usr/bin/node
+[vagrant@localhost hello_app]# node -v
 ```
 
 #### ここで、６個目のエラーが発生
@@ -170,22 +209,23 @@ node: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by node)
 → CentOS6で用意されている「gcc」はバージョンが古いため、「gcc」のソースからのビルド、新しいバージョンへの更新、ライブラリの用意が必要<br>
 【解決法参考サイト】[Minecraft.server-memo.net: gccの更新](https://minecraft.server-memo.net/mc-javaedition-install/#gcc)
 ```
-[root@localhost vagrant]# yum install gcc
-[root@localhost vagrant]# yum install gcc-c++
-[root@localhost vagrant]# curl -LO http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-9.3.0/gcc-9.3.0.tar.gz
-[root@localhost vagrant]# curl -LO http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-9.3.0/sha512.sum
-[root@localhost vagrant]# sha512sum --check sha512.sum
-[root@localhost vagrant]# tar xzfv gcc-9.3.0.tar.gz -C /usr/local/src
-[root@localhost vagrant]# cd /usr/local/src/gcc-9.3.0/
-[root@localhost gcc-9.3.0]# ./contrib/download_prerequisites
-[root@localhost gcc-9.3.0]# mkdir build
-[root@localhost gcc-9.3.0]# cd build
-[root@localhost build]# ../configure --enable-languages=c,c++ --prefix=/usr/local --disable-bootstrap --disable-multilib
-[root@localhost build]# make
-[root@localhost build]# make　install
-[root@localhost build]# gcc --version
-[root@localhost build]# cat /etc/ld.so.conf
-[root@localhost build]# cd /etc/ld.so.conf.d
+[vagrant@localhost hello_app]$ sudo yum install gcc
+[vagrant@localhost hello_app]$ sudo yum install gcc-c++
+[vagrant@localhost hello_app]$ curl -LO http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-9.3.0/gcc-9.3.0.tar.gz
+[vagrant@localhost hello_app]$ curl -LO http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/gcc-9.3.0/sha512.sum
+[vagrant@localhost hello_app]$ sha512sum --check sha512.sum
+[vagrant@localhost hello_app]$ sudo tar xzfv gcc-9.3.0.tar.gz -C /usr/local/src
+[vagrant@localhost hello_app]$ cd /usr/local/src/gcc-9.3.0/
+[vagrant@localhost gcc-9.3.0]$ sudo ./contrib/download_prerequisites
+[vagrant@localhost gcc-9.3.0]$ sudo mkdir build
+[vagrant@localhost gcc-9.3.0]$ cd build
+[vagrant@localhost build]$ sudo ../configure --enable-languages=c,c++ --prefix=/usr/local --disable-bootstrap --disable-multilib
+[vagrant@localhost build]$ sudo make
+[vagrant@localhost build]$ make　install
+[vagrant@localhost build]$ gcc --version
+[vagrant@localhost build]$ cat /etc/ld.so.conf
+[vagrant@localhost build]$ cd /etc/ld.so.conf.d
+[vagrant@localhost ld.so.conf.d]$ sudo su
 [root@localhost ld.so.conf.d]# vi usr_local_lib64.conf
 [root@localhost ld.so.conf.d]# ldconfig
 ```
@@ -197,7 +237,7 @@ ldconfig: /usr/local/lib64/libstdc++.so.6.0.28-gdb.py はELFファイルでは�
 → 【解決法参考サイト】に記載のとおり、
 > 該当ファイルの名前を変更して対応します。
 ```
-[root@localhost ld.so.conf.d]# mv /usr/local/lib64/libstdc++.so.6.0.25-gdb.py  /usr/local/lib64/back_libstdc++.so.6.0.25-gdb.py
+[vagrant@localhost ld.so.conf.d]$ sudo mv /usr/local/lib64/libstdc++.so.6.0.25-gdb.py  /usr/local/lib64/back_libstdc++.so.6.0.25-gdb.py
 ```
 
 #### ここで、８個目のエラーが発生
@@ -206,16 +246,16 @@ mv: cannot stat `/usr/local/lib64/libstdc++.so.6.0.25-gdb.py': そのような�
 ```
 → ７個目のエラーの時のファイル名（so.6.0.28）と８個目のエラーのファイル名の一致が必要
 ```
-[root@localhost ld.so.conf.d]# mv /usr/local/lib64/libstdc++.so.6.0.28-gdb.py  /usr/local/lib64/back_libstdc++.so.6.0.28-gdb.py
-[root@localhost ld.so.conf.d]# ldconfig
+[vagrant@localhost ld.so.conf.d]$ sudo mv /usr/local/lib64/libstdc++.so.6.0.28-gdb.py  /usr/local/lib64/back_libstdc++.so.6.0.28-gdb.py
+[vagrant@localhost ld.so.conf.d]$ sudo ldconfig
 ```
 
 #### 改めて、Herokuのバージョンを確認
 ```
-[root@localhost ld.so.conf.d]# heroku --version
+[vagrant@localhost ld.so.conf.d]$ heroku --version
 ```
 
-#### 少しエラーが減った。
+#### 少しエラーが減った。あと少し。
 ```
 node: /lib64/libc.so.6: version `GLIBC_2.16' not found (required by node)
 node: /lib64/libc.so.6: version `GLIBC_2.17' not found (required by node)
@@ -226,24 +266,11 @@ node: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by node)
 [teratail: nodeが古いバージョンになってしまいアップデートが効かない by yosuke_narumi](https://teratail.com/questions/231008)<br>
 [GitHubGist: update glibc to 2.17 for CentOS 6 by harv/glibc-2.17_centos6.sh](https://gist.github.com/harv/f86690fcad94f655906ee9e37c85b174#file-glibc-2-17_centos6-sh)
 ```
-[vagrant@localhost ~]wget http://copr-be.cloud.fedoraproject.org/results/mosquito/myrepo-el6/epel-6-x86_64/glibc-2.17-55.fc20/glibc-2.17-55.el6.x86_64.rpm
-[vagrant@localhost ~]wget http://copr-be.cloud.fedoraproject.org/results/mosquito/myrepo-el6/epel-6-x86_64/glibc-2.17-55.fc20/glibc-common-2.17-55.el6.x86_64.rpm
-[vagrant@localhost ~]wget http://copr-be.cloud.fedoraproject.org/results/mosquito/myrepo-el6/epel-6-x86_64/glibc-2.17-[vagrant@localhost ~]55.fc20/glibc-devel-2.17-55.el6.x86_64.rpm
-[vagrant@localhost ~]wget http://copr-be.cloud.fedoraproject.org/results/mosquito/myrepo-el6/epel-6-x86_64/glibc-2.17-55.fc20/glibc-headers-2.17-55.el6.x86_64.rpm
-[vagrant@localhost ~]$ sudo rpm -Uvh glibc-2.17-55.el6.x86_64.rpm glibc-common-2.17-55.el6.x86_64.rpm glibc-devel-2.17-55.el6.x86_64.rpm glibc-headers-2.17-55.el6.x86_64.rpm
-```
-
-#### ここで、最後のエラーが発生
-```
-警告: glibc-2.17-55.el6.x86_64.rpm: ヘッダ V3 RSA/SHA1 Signature, key ID 73ec361c: NOKEY
-エラー: 依存性の欠如:
-	glibc-common = 2.12-1.212.el6_10.3 は (インストール済み)glibc-2.12-1.212.el6_10.3.i686 に必要とされています
-	glibc-headers = 2.12-1.212.el6_10.3 は (インストール済み)glibc-devel-2.12-1.212.el6_10.3.i686 に必要とされています
-```
-→ 【解決法参考サイト】に記載のとおり、
-> 最後のパラメータに「--force --nodeps」を追加してみてください。
-```
-[vagrant@localhost ~]$ sudo rpm -Uvh glibc-2.17-55.el6.x86_64.rpm glibc-common-2.17-55.el6.x86_64.rpm glibc-devel-2.17-55.el6.x86_64.rpm glibc-headers-2.17-55.el6.x86_64.rpm  --force --nodeps
+[vagrant@localhost ld.so.conf.d]$ sudo wget http://copr-be.cloud.fedoraproject.org/results/mosquito/myrepo-el6/epel-6-x86_64/glibc-2.17-55.fc20/glibc-2.17-55.el6.x86_64.rpm
+[vagrant@localhost ld.so.conf.d]$ sudo wget http://copr-be.cloud.fedoraproject.org/results/mosquito/myrepo-el6/epel-6-x86_64/glibc-2.17-55.fc20/glibc-common-2.17-55.el6.x86_64.rpm
+[vagrant@localhost ld.so.conf.d]$ sudo wget http://copr-be.cloud.fedoraproject.org/results/mosquito/myrepo-el6/epel-6-x86_64/glibc-2.17-55.fc20/glibc-devel-2.17-55.el6.x86_64.rpm
+[vagrant@localhost ld.so.conf.d]$ sudo wget http://copr-be.cloud.fedoraproject.org/results/mosquito/myrepo-el6/epel-6-x86_64/glibc-2.17-55.fc20/glibc-headers-2.17-55.el6.x86_64.rpm
+[vagrant@localhost ld.so.conf.d]$ sudo rpm -Uvh glibc-2.17-55.el6.x86_64.rpm glibc-common-2.17-55.el6.x86_64.rpm glibc-devel-2.17-55.el6.x86_64.rpm glibc-headers-2.17-55.el6.x86_64.rpm
 ```
 
 #### 改めて、Herokuのバージョンを確認
@@ -251,6 +278,6 @@ node: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by node)
 [vagrant@localhost ~]$ heroku --version
 ```
 ```
-heroku/7.39.6 linux-x64 node-v12.16.3
+heroku/7.40.0 linux-x64 node-v12.16.3
 ```
-さぁ、準備が整いました。出発進行！
+準備が整いました。出発進行！
