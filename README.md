@@ -24,7 +24,7 @@ Make sure that `gem install pg -v '0.18.4' --source 'https://rubygems.org/'` suc
 ```
 → postgresqlのインストールが必要<br>
 【解決法】
-【参考サイト】[Qiita: @tdrk `gem install pg` が失敗するときの対処法](https://qiita.com/tdrk/items/812e7ea763080e147757)
+【参考サイト】[Qiita: `gem install pg` が失敗するときの対処法 @tdrk](https://qiita.com/tdrk/items/812e7ea763080e147757)
 ```
 [vagrant@localhost ch14]$ cd
 [vagrant@localhost ~]$ sudo su
@@ -61,11 +61,11 @@ Make sure that `gem install pg -v '0.18.4' --source 'https://rubygems.org/'` suc
 
 #### ここで、２個目のエラーが発生
 ```
-Permission denied (publickey).
+**Permission denied (publickey).**
 fatal: The remote end hung up unexpectedly.
 ```
 → GitHubで、公開鍵の設定が必要<br>
-【解決法】【参考サイト】[Qiita: @ GitHubでssh接続する手順〜公開鍵・秘密鍵の生成から〜](https://qiita.com/shizuma/items/2b2f873a0034839e47ce)
+【解決法】【参考サイト】[Qiita: GitHubでssh接続する手順〜公開鍵・秘密鍵の生成から〜 @shizuma](https://qiita.com/shizuma/items/2b2f873a0034839e47ce)
 ```
 [vagrant@localhost hello_app]$ cd
 ```
@@ -93,51 +93,81 @@ SyntaxError: Use of const in strict mode.
     at Module.load (module.js:356:32)
 ```
 → Node.jsのバージョンアップが必要<br>
-【解決法】【参考サイト】[Qiita: @shy_azusa electron-packager コマンドでの Use of const in strict mode. エラー](https://qiita.com/shy_azusa/items/b1ae6ab099e50c679774)
-```
-[vagrant@localhost hello_app]$ node -v
-[vagrant@localhost hello_app]$ npm install -g n
-```
-#### ここで、さらに４個目のエラーが発生
-```
-npm http GET https://registry.npmjs.org/n<br>
-npm http GET https://registry.npmjs.org/n<br>
-npm http GET https://registry.npmjs.org/n<br>
-npm ERR! Error: CERT_UNTRUSTED<br>
-npm ERR!     at SecurePair.<anonymous> (tls.js:1430:32)<br>
-npm ERR!     at SecurePair.emit (events.js:92:17)<br>
-npm ERR!     at SecurePair.maybeInitFinished (tls.js:1029:10)<br>
-npm ERR!     at CleartextStream.read [as _read] (tls.js:521:13)<br>
-npm ERR!     at CleartextStream.Readable.read (_stream_readable.js:341:10)<br>
-npm ERR!     at EncryptedStream.write [as _write] (tls.js:418:25)<br>
-npm ERR!     at doWrite (_stream_writable.js:226:10)<br>
-npm ERR!     at writeOrBuffer (_stream_writable.js:216:5)<br>
-npm ERR!     at EncryptedStream.Writable.write (_stream_writable.js:183:11)<br>
-npm ERR!     at write (_stream_readable.js:602:24)<br>
-npm ERR! If you need help, you may report this log at:<br>
-npm ERR!     <http://github.com/isaacs/npm/issues><br>
-npm ERR! or email it to:<br>
-npm ERR!     <npm-@googlegroups.com><br>
-
-npm ERR! System Linux 2.6.32-754.29.1.el6.x86_64<br>
-npm ERR! command "node" "/usr/bin/npm" "install" "-g" "n"<br>
-npm ERR! cwd /home/vagrant/environment/hello_app<br>
-npm ERR! node -v v0.10.48<br>
-npm ERR! npm -v 1.3.6<br>
-npm ERR! <br>
-npm ERR! Additional logging details can be found in:<br>
-npm ERR!     /home/vagrant/environment/hello_app/npm-debug.log<br>
-npm ERR! not ok code 0
-```
-→ https のレジストリに対するSSL鍵のバリデーション機能を外す必要<br>
-【解決法】【参考サイト】[npm install で SSL Error になった時の対処法。](https://blog.yug1224.com/archives/563d9b67bf652a600632d01e/)
+【参考サイト】[DEV Community: How to Upgrade and update Nodejs via NPM Centos 6 by TeddyZugana](https://dev.to/kevinmel2000/how-to-upgrade-and-update-nodejs-via-npm-centos-6-3omm)
 ```
 [vagrant@localhost hello_app]$ cd
 [vagrant@localhost ~]$ sudo su
+[root@localhost vagrant]# yum install gcc gcc-c++ make
+[root@localhost vagrant]# yum install epel-release
+[root@localhost vagrant]# yum install nodejs
+[root@localhost vagrant]# strings /usr/lib64/libstdc++.so.6 | grep GLIBC
 [root@localhost vagrant]# sudo npm cache clean -f
-[root@localhost vagrant]# npm config set strict-ssl false
 [root@localhost vagrant]# sudo npm install -g n
-[root@localhost vagrant]# npm config set strict-ssl true
-[root@localhost vagrant]# sudo n stable
-[root@localhost vagrant]# sudo ln -sf /usr/local/n/versions/node/12.16.3/bin/node /usr/bin/node
 ```
+#### ここで、さらに４個目のエラーが発生
+```
+npm http GET https://registry.npmjs.org/n
+npm http GET https://registry.npmjs.org/n
+npm http GET https://registry.npmjs.org/n
+npm ERR! Error: CERT_UNTRUSTED
+npm ERR!     at SecurePair.<anonymous> (tls.js:1430:32)
+npm ERR!     at SecurePair.emit (events.js:92:17)
+npm ERR!     at SecurePair.maybeInitFinished (tls.js:1029:10)
+npm ERR!     at CleartextStream.read [as _read] (tls.js:521:13)
+npm ERR!     at CleartextStream.Readable.read (_stream_readable.js:341:10)
+npm ERR!     at EncryptedStream.write [as _write] (tls.js:418:25)
+npm ERR!     at doWrite (_stream_writable.js:226:10)
+npm ERR!     at writeOrBuffer (_stream_writable.js:216:5)
+npm ERR!     at EncryptedStream.Writable.write (_stream_writable.js:183:11)
+npm ERR!     at write (_stream_readable.js:602:24)
+npm ERR! If you need help, you may report this log at:
+npm ERR!     <http://github.com/isaacs/npm/issues>
+npm ERR! or email it to:
+npm ERR!     <npm-@googlegroups.com>
+
+npm ERR! System Linux 2.6.32-754.29.1.el6.x86_64
+npm ERR! command "node" "/usr/bin/npm" "install" "-g" "n"
+npm ERR! cwd /home/vagrant/environment/hello_app
+npm ERR! node -v v0.10.48
+npm ERR! npm -v 1.3.6
+npm ERR! 
+npm ERR! Additional logging details can be found in:
+npm ERR!     /home/vagrant/environment/hello_app/npm-debug.log
+npm ERR! not ok code 0
+```
+→ https のレジストリに対するSSL鍵のバリデーション機能を外す必要<br>
+【解決法】【参考サイト】[@YuG1224 BLOG: npm install で SSL Error になった時の対処法。](https://blog.yug1224.com/archives/563d9b67bf652a600632d01e/)
+```
+[root@localhost vagrant]# npm config set strict-ssl false
+[root@localhost vagrant]# npm install -g n
+[root@localhost vagrant]# npm config set strict-ssl true
+```
+もう一度、気を取り直して、Node.jsのバージョンアップを継続。
+```
+[root@localhost vagrant]# sudo n stable
+[root@localhost vagrant]# sudo ln -sf /usr/local/n/versions/node/11.8.0/bin/node /usr/bin/node
+[root@localhost vagrant]# node -v
+```
+#### ここで、さらに５個目のエラーが発生
+```
+bash: /usr/bin/node: そのようなファイルやディレクトリはありません
+```
+→ `[root@localhost vagrant]# sudo n stable`で`mkdir`されたフォルダ名と
+`[root@localhost vagrant]# sudo ln -sf /usr/local/n/versions/node/11.8.0/bin/node /usr/bin/node`のフォルダ名の一致が必要
+```
+[root@localhost vagrant]# sudo ln -sf /usr/local/n/versions/node/12.16.3/bin/node /usr/bin/node
+[root@localhost vagrant]# node -v
+```
+#### ここで、６個目のエラーが発生
+```
+node: /usr/lib64/libstdc++.so.6: version `GLIBCXX_3.4.14' not found (required by node)
+node: /usr/lib64/libstdc++.so.6: version `GLIBCXX_3.4.18' not found (required by node)
+node: /usr/lib64/libstdc++.so.6: version `CXXABI_1.3.5' not found (required by node)
+node: /usr/lib64/libstdc++.so.6: version `GLIBCXX_3.4.15' not found (required by node)
+node: /lib64/libc.so.6: version `GLIBC_2.16' not found (required by node)
+node: /lib64/libc.so.6: version `GLIBC_2.17' not found (required by node)
+node: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by node)
+```
+
+
+
