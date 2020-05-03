@@ -1,20 +1,37 @@
-### Railsチュートリアルの、Macの場合の仮想環境（Vagrant）及びGitHubを使った環境構築、の自分用補足メモ（2020年４月）
+### Railsチュートリアルの、Macの場合の仮想環境（Vagrant）及びGitHubを使った環境構築、の自分用補足メモ（2020年５月）
 
-#### まず、Railsチュートリアル[1.2.1 開発環境](https://railstutorial.jp/chapters/beginning?version=5.1#sec-development_environment)から[YassLab Inc.](https://github.com/yasslab)の[仮想環境 (Vagrant) を使った環境構築](https://github.com/yasslab/railstutorial.jp_starter_kit)に飛んだ。
+#### 前提: ドットインストールの次のレッスンの受講
+* [ローカル開発環境の構築 [macOS編]](https://dotinstall.com/lessons/basic_localdev_mac_v2)
+
+* [【旧版】ローカル開発環境の構築 » #10 PostgreSQLを導入してみよう](https://dotinstall.com/lessons/basic_local_development_v2/24813)
+```
+[vagrant@localhost ~]$ sudo yum install https://download.postgresql.org/pub/repos/yum/reporpms/EL-6-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+[vagrant@localhost ~]$ sudo yum install postgresql12
+[vagrant@localhost ~]$ sudo yum install postgresql12-server
+[vagrant@localhost ~]$ sudo service postgresql-12 initdb
+[vagrant@localhost ~]$ sudo chkconfig postgresql-12 on
+[vagrant@localhost ~]$ sudo service postgresql-12 start
+[vagrant@localhost ~]$ psql --version
+```
+* [Ruby on Rails 5入門 » #01 Ruby on Railsを使ってみよう](https://dotinstall.com/lessons/basic_rails_v3/41801)
+```
+[vagrant@localhost ~]$ cd ~/.rbenv
+[vagrant@localhost .rbenv]$ git pull origin master
+[vagrant@localhost .rbenv]$ cd ~/.rbenv/plugins/ruby-build 
+[vagrant@localhost ruby-build]$ git pull origin master
+[vagrant@localhost ruby-build]$ rbenv install 2.6.5
+[vagrant@localhost ruby-build]$ rbenv global 2.6.5
+[vagrant@localhost ruby-build]$ rbenv rehash
+[vagrant@localhost ruby-build]$ ruby -v
+[vagrant@localhost ruby-build]$ gem install rails -v 5.1.3 --no-document
+[vagrant@localhost ruby-build]$ rails --version
+```
+#### 次に、Railsチュートリアル[1.2.1 開発環境](https://railstutorial.jp/chapters/beginning?version=5.1#sec-development_environment)から[YassLab Inc.](https://github.com/yasslab)の[仮想環境 (Vagrant) を使った環境構築](https://github.com/yasslab/railstutorial.jp_starter_kit)に飛んだ。
 1. [本ツールを使った環境構築の手順](https://github.com/yasslab/railstutorial.jp_starter_kit#本ツールを使った環境構築の手順)から[スターターキット](https://github.com/yasslab/railstutorial.jp_starter_kit/archive/master.zip)をダウンロードし、Zip ファイルを展開
-2. VirtualBoxをインストールする
-3. Vagrantをインストールする
-4. Vagrantfile があるディレクトリに移動して、`vagrant up`を実行する
-5. `vagrant ssh`でゲストOSにログインする
-6. `ruby --version`や`rails --version`でちゃんと動くか確かめる
+2. 動作確認
 ```
-  ruby 2.6.2p47 (2019-03-13 revision 67232) [x86_64-linux]
-  Rails 5.1.7
-```
-7. 動作確認
-```
-[vagrant@localhost ~]$ git clone https://github.com/yasslab/sample_apps.git
-[vagrant@localhost ~]$ cd sample_apps/5_1_2/ch14
+[vagrant@localhost ruby-build]$ git clone https://github.com/yasslab/sample_apps.git
+[vagrant@localhost ruby-build]$ cd sample_apps/5_1_2/ch14
 [vagrant@localhost ch14]$ bundle install
 ```
 #### ここで、１個目のエラーが発生
@@ -25,29 +42,24 @@ Make sure that `gem install pg -v '0.18.4' --source 'https://rubygems.org/'` suc
 → postgresqlのインストールが必要<br>
 【解決法参考サイト】[Qiita: `gem install pg` が失敗するときの対処法 @tdrk](https://qiita.com/tdrk/items/812e7ea763080e147757)
 ```
-[vagrant@localhost ch14]$ cd
-[vagrant@localhost ~]$ sudo su
-[root@localhost vagrant]# yum install postgresql-devel
-[root@localhost ~]# exit
+[vagrant@localhost ch14]$ sudo su yum install postgresql-devel
+[vagrant@localhost ch14]$ bundle install
 ```
 7. 動作確認続き
 ```
-[vagrant@localhost ~]$ cd sample_apps/5_1_2/ch14
-[vagrant@localhost ch14]$ bundle install
 [vagrant@localhost ch14]$ rails db:migrate
 [vagrant@localhost ch14]$ rails test
 [vagrant@localhost ch14]$ rails server
 ```
 
-#### 次に、Railsのバージョンを5.1.7から5.1.6にダウングレードした。
-【解決法参考サイト】[StackOverflow: How to downgrade my rails version?](https://stackoverflow.com/questions/28082120/how-to-downgrade-my-rails-version)
+#### 次に、Railsのバージョンを5.1.3から5.1.6にアップグレード
 ```
-[vagrant@localhost ch14]$ cd
-[vagrant@localhost ~]$ rails --version
-[vagrant@localhost ~]$ gem uninstall rails
-[vagrant@localhost ~]$ gem uninstall railties
-[vagrant@localhost ~]$ gem install rails -v 5.1.6
-[vagrant@localhost ~]$ rails -v
+[vagrant@localhost ch14]$ rails -v
+[vagrant@localhost ch14]$ gem uninstall rails
+[vagrant@localhost ch14]$ gem uninstall railties
+[vagrant@localhost ch14]$ gem install rails -v 5.1.6 --no-document
+[vagrant@localhost ch14]$ bundle install
+[vagrant@localhost ch14]$ rails -v
 ```
 
 #### 次に、Railsチュートリアル[1.3 最初のアプリケーション](https://railstutorial.jp/chapters/beginning?version=5.1#sec-the_hello_application)に進んだ。
